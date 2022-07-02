@@ -2,8 +2,6 @@ const gallery = document.querySelector('#gallery');
 
 
 const cardImgContainer = document.querySelector(".card-img-container");
-const body = document.getElementsByTagName("body");
-var card1 = '';
 
 const firstNames = [];
 const lastNames = [];
@@ -18,6 +16,8 @@ const detailedAddressLine3 = [];
 var dateFixer = '';
 const birthdays = []
 
+var findNum = '';
+
 function left(str, chr) {
     return str.slice(0, chr - str.length);
   }
@@ -30,7 +30,7 @@ fetch('https://randomuser.me/api/?nat=us&results=12') //connects to the API
         firstNames[i] = data.results[i].name.first;
         lastNames[i] = data.results[i].name.last;
         emails[i] = data.results[i].email;
-        images[i] = data.results[i].picture.medium;
+        images[i] = data.results[i].picture.large;
         cities[i] = data.results[i].location.city;
         states[i] = data.results[i].location.state
         cellFixer = data.results[i].cell;
@@ -43,14 +43,14 @@ fetch('https://randomuser.me/api/?nat=us&results=12') //connects to the API
         dateFixer = dateFixer[5] + dateFixer[6] + "/" +  dateFixer[8] + dateFixer[9] + "/" + dateFixer[0] + dateFixer[1]+ dateFixer[2] + dateFixer[3];
         birthdays[i] = dateFixer;
         gallery.insertAdjacentHTML('beforeend', `
-        <div class="card num${i}">
-            <div class="card-img-container">
-                <img class="card-img" src="${images[i]}" alt="profile pic">
+        <div class="card space ${i}">
+            <div class="card-img-container space ${i}">
+                <img class="card-img space ${i}" src="${images[i]}" alt="profile pic">
             </div>
-            <div class="card-info-container">
-                <h3 id="name" class="card-name cap">${firstNames[i]} ${lastNames[i]}</h3>
-                <p class="card-text">${emails[i]}</p>
-                <p class="card-text cap">${cities[i]}, ${states[i]}</p>
+            <div class="card-info-container space ${i}">
+                <h3 id="name" class="card-name cap ${i}">${firstNames[i]} ${lastNames[i]}</h3>
+                <p class="card-text space ${i}">${emails[i]}</p>
+                <p class="card-text cap ${i}">${cities[i]}, ${states[i]}</p>
             </div>
         </div> `)
         
@@ -59,26 +59,31 @@ fetch('https://randomuser.me/api/?nat=us&results=12') //connects to the API
 
 
         }});
+    
+    gallery.addEventListener('click', function (e){
+        if (e.target.classList.contains('card') || e.target.classList.contains('card-img-container') || e.target.classList.contains('card-img') || e.target.classList.contains('card-info-container') || e.target.classList.contains('cap') || e.target.classList.contains('card-text')) {
+            findNum = e.target.classList[2];
+            console.log(findNum);
+            displayModal(findNum);
+        }
+    });
 
-    card1 = document.querySelector(`num1`);
-    card1.addEventListener('click', test);
 
+function displayModal(num){
 
-function displayModal(){
-
-    body.insertAdjacentHTML('beforeend', `
+    gallery.insertAdjacentHTML('beforeend', `
     <div class="modal-container">
                 <div class="modal">
                     <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
                     <div class="modal-info-container">
-                        <img class="modal-img" src="https://placehold.it/125x125" alt="profile picture">
-                        <h3 id="name" class="modal-name cap">name</h3>
-                        <p class="modal-text">email</p>
-                        <p class="modal-text cap">city</p>
+                        <img class="modal-img" src="${images[num]}" alt="profile picture">
+                        <h3 id="name" class="modal-name cap">${firstNames[num]} ${lastNames[num]}</h3>
+                        <p class="modal-text">${emails[num]}</p>
+                        <p class="modal-text cap">${cities[num]}</p>
                         <hr>
-                        <p class="modal-text">(555) 555-5555</p>
-                        <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-                        <p class="modal-text">Birthday: 10/21/2015</p>
+                        <p class="modal-text">${cellNumbers[num]}</p>
+                        <p class="modal-text">${detailedAddressLine1[num]}, ${detailedAddressLine2[num]}</p>
+                        <p class="modal-text">Birthday: ${birthdays[num]}</p>
                     </div>
                 </div>
     `)
@@ -87,3 +92,11 @@ function displayModal(){
 function test(){
     console.log("test");
 }
+
+/*
+var closeModal = document.querySelector(".modal-close-btn");
+var modal = document.querySelector(".modal");
+closeModal.onclick = function(){
+    modal.style.display = "none";
+}
+*/
