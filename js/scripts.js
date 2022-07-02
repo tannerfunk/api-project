@@ -14,6 +14,8 @@ const detailedAddressLine1 = [];
 const detailedAddressLine2 = [];
 const detailedAddressLine3 = [];
 var dateFixer = '';
+var cellFixer = 0;
+var cellFixerArray = [];
 const birthdays = []
 
 var findNum = '';
@@ -35,6 +37,8 @@ fetch('https://randomuser.me/api/?nat=us&results=12') //connects to the API
         states[i] = data.results[i].location.state
         cellFixer = data.results[i].cell;
         cellFixer = cellFixer.replace(/\D/g, ''); //strips down to just the numbers so far... will put other formating in laterr
+        cellFixerArray = cellFixer.split("");
+        cellFixer = `(${cellFixerArray[0]}${cellFixerArray[1]}${cellFixerArray[2]}) ${cellFixerArray[3]}${cellFixerArray[4]}${cellFixerArray[5]}-${cellFixerArray[6]}${cellFixerArray[7]}${cellFixerArray[8]}${cellFixerArray[9]}`
         cellNumbers[i] = cellFixer;
         detailedAddressLine1[i] = data.results[i].location.street.number + " " + data.results[i].location.street.name;
         detailedAddressLine2[i] = cities[i] + ", " + states[i] + " " + data.results[i].location.postcode;
@@ -61,10 +65,15 @@ fetch('https://randomuser.me/api/?nat=us&results=12') //connects to the API
         }});
     
     gallery.addEventListener('click', function (e){
-        if (e.target.classList.contains('card') || e.target.classList.contains('card-img-container') || e.target.classList.contains('card-img') || e.target.classList.contains('card-info-container') || e.target.classList.contains('cap') || e.target.classList.contains('card-text')) {
+        if (e.target.classList.contains('card') || e.target.classList.contains('card-img-container') || e.target.classList.contains('card-img') || e.target.classList.contains('card-info-container') || e.target.classList.contains('card-name') || e.target.classList.contains('card-text')) {
             findNum = e.target.classList[2];
-            console.log(findNum);
             displayModal(findNum);
+        }
+    });
+
+    gallery.addEventListener('click', function (e){
+        if (e.target.classList.contains('modal-container') || e.target.classList.contains('close') || e.target.classList.contains('modal-close-btn')) {
+            document.querySelector(".modal-container").remove();
         }
     });
 
@@ -74,7 +83,7 @@ function displayModal(num){
     gallery.insertAdjacentHTML('beforeend', `
     <div class="modal-container">
                 <div class="modal">
-                    <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+                    <button type="button" id="modal-close-btn" class="modal-close-btn"><strong class="close">X</strong></button>
                     <div class="modal-info-container">
                         <img class="modal-img" src="${images[num]}" alt="profile picture">
                         <h3 id="name" class="modal-name cap">${firstNames[num]} ${lastNames[num]}</h3>
@@ -88,15 +97,3 @@ function displayModal(num){
                 </div>
     `)
 };
-
-function test(){
-    console.log("test");
-}
-
-/*
-var closeModal = document.querySelector(".modal-close-btn");
-var modal = document.querySelector(".modal");
-closeModal.onclick = function(){
-    modal.style.display = "none";
-}
-*/
